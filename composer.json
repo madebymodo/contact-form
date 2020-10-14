@@ -39,5 +39,11 @@
     "components": {
       "mailer": "craft\\contactform\\Mailer"
     }
-  }
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/madebymodo/contact-form"
+    }
+  ]
 }
