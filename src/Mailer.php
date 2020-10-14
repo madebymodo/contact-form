@@ -72,6 +72,14 @@ class Mailer extends Component
             ->setTextBody($textBody)
             ->setHtmlBody($htmlBody);
 
+        if (isset($submission->message['FileUrl'])) {
+            $url = $submission->message['FileUrl'];
+            $message->attach($url, [
+                'fileName' => basename($url),
+                'contentType' => FileHelper::getMimeTypeByExtension($url),
+            ]);
+        }
+
         if ($submission->attachment !== null) {
             $allowedFileTypes = Craft::$app->getConfig()->getGeneral()->allowedFileExtensions;
 
