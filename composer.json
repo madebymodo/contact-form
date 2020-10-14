@@ -1,5 +1,5 @@
 {
-  "name": "madebymodo/contact-form",
+  "name": "craftcms/contact-form",
   "description": "Add a simple contact form to your Craft CMS site",
   "version": "2.2.7",
   "type": "craft-plugin",
