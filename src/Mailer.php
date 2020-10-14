@@ -201,16 +201,16 @@ class Mailer extends Component
     {
         $fields = [];
 
-        if ($submission->fromName) {
-            $fields[Craft::t('contact-form', 'Name')] = $submission->fromName;
-        }
+        // if ($submission->fromName) {
+        //     $fields[Craft::t('contact-form', 'Name')] = $submission->fromName;
+        // }
 
-        $fields[Craft::t('contact-form', 'Email')] = $submission->fromEmail;
+        // $fields[Craft::t('contact-form', 'Email')] = $submission->fromEmail;
 
         if (is_array($submission->message)) {
             $body = $submission->message['body'] ?? '';
-            $fields = array_merge($fields, $submission->message);
-            unset($fields['body']);
+            // $fields = array_merge($fields, $submission->message);
+            // unset($fields['body']);
         } else {
             $body = (string)$submission->message;
         }
