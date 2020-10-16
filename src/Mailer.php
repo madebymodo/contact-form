@@ -73,7 +73,6 @@ class Mailer extends Component
             ->setTextBody($textBody)
             ->setHtmlBody($htmlBody);
 
-        // sending hidden attachment
         if (isset($submission->message['gatedfile'])) {
             $fileid = $submission->message['gatedfile'];
             $file = Asset::find()->id($fileid)->one()->getContents();
@@ -83,7 +82,6 @@ class Mailer extends Component
                 'contentType' => 'application/pdf',
             ]);
         }
-
 
         if ($submission->attachment !== null) {
             $allowedFileTypes = Craft::$app->getConfig()->getGeneral()->allowedFileExtensions;
@@ -109,6 +107,9 @@ class Mailer extends Component
 
         // Grab any "to" emails set in the plugin settings.
         $toEmails = Craft::parseEnv($settings->toEmail);
+        if (isset($submission->message['gatedfile'])) {
+            $toEmails = $toEmails . ',' . $fromEmail;
+        }
         $toEmails = is_string($toEmails) ? StringHelper::split($toEmails) : $toEmails;
 
         // Fire a 'beforeSend' event
