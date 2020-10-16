@@ -6,6 +6,7 @@ use Craft;
 use craft\contactform\events\SendEvent;
 use craft\contactform\models\Submission;
 use craft\elements\User;
+use craft\elements\Asset;
 use craft\helpers\FileHelper;
 use craft\helpers\StringHelper;
 use craft\mail\Message;
@@ -72,13 +73,17 @@ class Mailer extends Component
             ->setTextBody($textBody)
             ->setHtmlBody($htmlBody);
 
-        if (isset($submission->message['FileUrl'])) {
-            $url = $submission->message['FileUrl'];
-            $message->attach($url, [
-                'fileName' => basename($url),
-                'contentType' => FileHelper::getMimeTypeByExtension($url),
+        // sending hidden attachment
+        if (isset($submission->message['gatedfile'])) {
+            $fileid = $submission->message['gatedfile'];
+            $file = Asset::find()->id($fileid)->one()->getContents();
+
+            $message->attachContent($file, [
+                'fileName' => 'case-study.pdf',
+                'contentType' => 'application/pdf',
             ]);
         }
+
 
         if ($submission->attachment !== null) {
             $allowedFileTypes = Craft::$app->getConfig()->getGeneral()->allowedFileExtensions;
