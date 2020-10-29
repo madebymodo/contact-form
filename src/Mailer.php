@@ -73,16 +73,6 @@ class Mailer extends Component
             ->setTextBody($textBody)
             ->setHtmlBody($htmlBody);
 
-        if (isset($submission->message['gatedfile'])) {
-            $fileid = $submission->message['gatedfile'];
-            $file = Asset::find()->id($fileid)->one()->getContents();
-
-            $message->attachContent($file, [
-                'fileName' => 'case-study.pdf',
-                'contentType' => 'application/pdf',
-            ]);
-        }
-
         if ($submission->attachment !== null) {
             $allowedFileTypes = Craft::$app->getConfig()->getGeneral()->allowedFileExtensions;
 
@@ -107,9 +97,6 @@ class Mailer extends Component
 
         // Grab any "to" emails set in the plugin settings.
         $toEmails = Craft::parseEnv($settings->toEmail);
-        if (isset($submission->message['gatedfile'])) {
-            $toEmails = $toEmails . ',' . $fromEmail;
-        }
         $toEmails = is_string($toEmails) ? StringHelper::split($toEmails) : $toEmails;
 
         // Fire a 'beforeSend' event
@@ -133,6 +120,28 @@ class Mailer extends Component
         foreach ($event->toEmails as $toEmail) {
             $message->setTo($toEmail);
             $mailer->send($message);
+        }
+
+        // send pdf message
+        if (isset($submission->message['gatedfile'])) {
+            // create new message
+            $pdfTextBody = $submission->message['gatedfileIntro'] ?? '';
+            $pdfMessage = (new Message())
+                ->setFrom([$fromEmail => $fromName])
+                ->setReplyTo([$submission->fromEmail => $submission->fromName])
+                ->setSubject($subject)
+                ->setTextBody($pdfTextBody);
+
+            $pdfFileid = $submission->message['gatedfile'];
+            $pdfFile = Asset::find()->id($pdfFileid)->one()->getContents();
+
+            $pdfMessage->attachContent($pdfFile, [
+                'fileName' => 'case-study.pdf',
+                'contentType' => 'application/pdf',
+            ]);
+
+            $pdfMessage->setTo($fromEmail);
+            $mailer->send($pdfMessage);
         }
 
         // Fire an 'afterSend' event
