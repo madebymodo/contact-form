@@ -125,10 +125,13 @@ class Mailer extends Component
         // send pdf message
         if (isset($submission->message['gatedfile'])) {
             // create new message
-            $pdfTextBody = $submission->message['gatedfileIntro'] ?? '';
+            $pdfTextBody = $submission->message['gatedfileintro'] ?? '';
+            $receiverName = $submission->message['Nome'] ?? 'utente';
+            $receiverSurname = $submission->message['Cognome'] ?? '';
+            $pdfTextBody = str_replace("%name%", $receiverName, $pdfTextBody);
+            $pdfTextBody = str_replace("%surname%", $receiverSurname, $pdfTextBody);
             $pdfMessage = (new Message())
                 ->setFrom([$fromEmail => $fromName])
-                ->setReplyTo([$submission->fromEmail => $submission->fromName])
                 ->setSubject($subject)
                 ->setTextBody($pdfTextBody);
 
@@ -140,7 +143,7 @@ class Mailer extends Component
                 'contentType' => 'application/pdf',
             ]);
 
-            $pdfMessage->setTo($fromEmail);
+            $pdfMessage->setTo($submission->fromEmail);
             $mailer->send($pdfMessage);
         }
 
