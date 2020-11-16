@@ -230,6 +230,7 @@ class Mailer extends Component
             $fields = array_merge($fields, $submission->message);
             unset($fields['body']);
             unset($fields['gatedfileintro']);
+            unset($fields['gatedfile']);
         } else {
             $body = (string)$submission->message;
         }
