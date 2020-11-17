@@ -131,7 +131,7 @@ class Mailer extends Component
             $pdfTextBody = str_replace("%name%", $receiverName, $pdfTextBody);
             $pdfTextBody = str_replace("%surname%", $receiverSurname, $pdfTextBody);
             $pdfMessage = (new Message())
-                ->setFrom([$fromEmail => $fromName])
+                ->setFrom([$fromEmail => "Elena di Injenia"])
                 ->setSubject($subject)
                 ->setTextBody($pdfTextBody);
 
