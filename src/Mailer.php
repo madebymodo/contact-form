@@ -59,6 +59,9 @@ class Mailer extends Component
         $fromEmail = $this->getFromEmail($mailer->from);
         $fromName = $this->compileFromName($submission->fromName);
         $subject = $this->compileSubject($submission->subject);
+        if (isset($submission->message['product'])) {
+            $subject = str_replace("%product%", $submission->message['product'], $subject);
+        }
         $textBody = $this->compileTextBody($submission);
         $htmlBody = $this->compileHtmlBody($textBody);
 
@@ -209,11 +212,23 @@ class Mailer extends Component
 
         if (is_array($submission->message)) {
             $body = $submission->message['body'] ?? '';
+
+            // replace placeholder with product name
+            if (isset($submission->message['product'])) {
+                $body = str_replace("%product%", $submission->message['product'], $body);
+            }
+
+            if (isset($submission->message['disclaimer'])) {
+                $body .= "\n\n" . $submission->message['disclaimer'];
+            }    
             // $fields = array_merge($fields, $submission->message);
             // unset($fields['body']);
         } else {
             $body = (string)$submission->message;
         }
+
+        // insert carriage returns
+        $body = str_replace("\R", "\n", $body);
 
         $text = '';
 
